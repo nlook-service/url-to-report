@@ -1,0 +1,76 @@
+{
+  "target": {
+    "url": "https://obsidian.md/",
+    "final_url": "https://obsidian.md/",
+    "fetched_at": null,
+    "status": 200,
+    "render_required": false,
+    "meta": {
+      "title": {
+        "value": "Obsidian - Sharpen your thinking",
+        "source": "og:title"
+      },
+      "description": {
+        "value": "The free and flexible app for your private thoughts.",
+        "source": "meta:description"
+      },
+      "site_name": {
+        "value": "Obsidian",
+        "source": "og:site_name"
+      },
+      "canonical": {
+        "value": null,
+        "source": null
+      },
+      "locale": {
+        "value": null,
+        "source": null
+      },
+      "theme_color": {
+        "value": null,
+        "source": null
+      },
+      "favicon": {
+        "value": "/favicon.ico",
+        "source": "link:icon"
+      },
+      "twitter_card": {
+        "value": "summary_large_image",
+        "source": "twitter:card"
+      },
+      "og_image": {
+        "url": "https://obsidian.md/images/banner.png",
+        "width": null,
+        "height": null,
+        "type": null,
+        "alt": null
+      },
+      "jsonld": []
+    },
+    "seo_flags": {
+      "has_og_image": true,
+      "og_image_dimensions_ok": false,
+      "has_jsonld": false,
+      "has_standard_description": true,
+      "title_length_ok": true,
+      "has_canonical": false,
+      "has_favicon": true
+    }
+  },
+  "crawl": {
+    "depth": 0,
+    "max_pages": 0,
+    "sitemap_used": false,
+    "internal_links_found": 0,
+    "pages": [],
+    "notes": []
+  },
+  "provenance": {
+    "collector": "homepage-diagnostic/reference-collector v1",
+    "grading": {
+      "fetched_fields": "fact",
+      "crawl_structure": "fact",
+      "analysis": "estimate"
+    }
+  }
+}

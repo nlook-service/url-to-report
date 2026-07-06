@@ -1,0 +1,20 @@
+{
+  "name": "homepage-diagnostic",
+  "version": "1.1.0",
+  "description": "Turn a business URL into a cited, evidence-graded local marketing diagnostic. Reads the homepage <head> + JSON-LD, researches public off-site sources (place page, review platforms, press, blogs) with numbered citations, and renders an HTML report where every claim is labeled 사실 / 추정 / 데이터 없음 — never inventing numbers it did not verify.",
+  "author": {
+    "name": "nlook",
+    "url": "https://nlook.me"
+  },
+  "homepage": "https://github.com/nlook-service/url-to-report",
+  "license": "MIT",
+  "keywords": [
+    "diagnostic",
+    "marketing",
+    "local-business",
+    "seo",
+    "report",
+    "evidence-grading",
+    "skill"
+  ]
+}

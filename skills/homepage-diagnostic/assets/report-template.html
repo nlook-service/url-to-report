@@ -1,0 +1,325 @@
+<!--
+  LOCAL MARKETING DIAGNOSTIC — REPORT TEMPLATE (v4, bright/editorial)
+  Order: meta → digital-presence index → KPI → funnel → (place) → (press) → insights
+         → strength/gap → (region) → priorities → (overseas) → link inventory → evidence.
+  Fill from collector JSON + off-site probes + (optional) authenticated connectors.
+  Missing => omit/미상, never guess. Every 사실 needs a numbered <sup> mapped to REFERENCE_ITEMS.
+
+  STRING TOKENS: {{SOURCE_URL}} {{OG_IMAGE}} {{TITLE}} {{DESCRIPTION}} {{HERO_CHIPS}}
+    {{PROFILE_LEAD}} {{COMPOSITE_SCORE}} {{INDEX_FORMULA}} {{FOOT_DISC}}
+  PROFILE (multi-axis radar — the main lens; composite score shown small):
+    {{RADAR_SVG}}    inline SVG radar, one axis per scored dimension (fact axes only)
+    {{AXIS_CARDS}}   .acard per axis (name, score, one-line inputs, confidence pill)
+    {{COMPOSITE_SCORE}}  small reference number; NEVER the headline. Unmeasured axes stay unscored.
+  LOOP / BLOCK TOKENS (author HTML; empty string on {{*_SECTION}} removes that section):
+    {{KPI_TILES}}    .kpi tiles (big number + grade pill + sub)
+    {{FUNNEL_ROWS}}  .fn-row bands (stage, value, level color) ; {{FUNNEL_CALLOUT}}
+    {{PLACE_SECTION}}   optional — naver place detail (한줄평·연관검색어·딥링크)
+    {{GSC_SECTION}}     optional — Google Search Console 실측(검색어·순위·국가·기기) if owner token supplied
+    {{PRESS_SECTION}}   optional — 언론·인증 cards (from crawled outbound links)
+    {{INSIGHT_CARDS}}   .ins-card (metric + body), each precise & quantified
+    {{WIN_ITEMS}} {{GAP_ITEMS}}   .sg-col li lists
+    {{REGION_SECTION}}  optional — 상권 기반 채널 전략(왜 이 채널인가)
+    {{PRIORITY_ITEMS}}  .p rows (rank + action + what-it-fills)
+    {{OVERSEAS_SECTION}} optional — 해외/다국어(EN·hreflang) 진단
+    {{INVENTORY_CARDS}} .invc (link-graph counts from full-page crawl)
+    {{REFERENCE_ITEMS}} .ev rows — numbered sources behind every <sup>
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>메타 기반 마케팅 진단 리포트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800;900&family=Noto+Serif+KR:wght@500;600;700;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<style>
+  :root{
+    --bg:#F4F7FB;--card:#FFFFFF;
+    --ink:#122A41;--ink-2:#1C3A56;--soft:#5D7188;--muted:#93A4B6;
+    --line:#E5ECF3;--line-2:#EEF3F8;
+    --blue:#2563EB;--blue-2:#4C86F5;--blue-soft:#E4EDFF;
+    --green:#12A06A;--green-soft:#DCF4EA;
+    --amber:#E0930F;--amber-soft:#FBEDD1;
+    --coral:#E0533B;--coral-soft:#FBE2DB;
+    --slate:#8595A7;--slate-soft:#EAEFF4;
+    --serif:"Noto Serif KR",serif;--display:"Playfair Display",serif;
+    --sans:"Pretendard","Noto Sans KR",-apple-system,system-ui,sans-serif;
+    --shadow:0 1px 2px rgba(18,42,65,.04),0 8px 24px rgba(18,42,65,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased;font-feature-settings:"tnum" on,"ss01" on}
+  .wrap{max-width:1020px;margin:0 auto;padding:0 26px}
+  .num{font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .eyebrow{font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;font-weight:800;color:var(--blue)}
+  h2.sec{font-family:var(--serif);font-weight:700;font-size:clamp(22px,3.4vw,31px);letter-spacing:-.01em;margin:10px 0 6px;color:var(--ink)}
+  .sec-lead{font-size:15.5px;color:var(--soft);max-width:66ch}
+  section{padding:52px 0;border-bottom:1px solid var(--line)}
+  .cite{color:var(--muted);font-size:11px;font-weight:800;white-space:nowrap}
+
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:99px;white-space:nowrap}
+  .pill::before{content:"";width:6px;height:6px;border-radius:99px}
+  .pill.fact{color:#0C7A4E;background:var(--green-soft)}.pill.fact::before{background:var(--green)}
+  .pill.est{color:#9A6408;background:var(--amber-soft)}.pill.est::before{background:var(--amber)}
+  .pill.none{color:#A23A26;background:var(--coral-soft)}.pill.none::before{background:var(--coral)}
+
+  .topbar{background:var(--card);border-bottom:1px solid var(--line)}
+  .topbar .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:15px 26px;flex-wrap:wrap}
+  .src{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:600}
+  .src .dot{width:8px;height:8px;border-radius:99px;background:var(--green);box-shadow:0 0 0 4px var(--green-soft)}
+  .src b{color:var(--blue)}
+  .topbar .doc{font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+
+  .hero{background:var(--card)}
+  .hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center;padding:44px 26px}
+  .hero .kick{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:14px}
+  .hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(26px,4.4vw,40px);line-height:1.18;letter-spacing:-.02em;margin-bottom:14px}
+  .hero .desc{font-size:15.5px;color:var(--soft);max-width:52ch;margin-bottom:18px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-size:11.5px;color:var(--ink-2);background:var(--blue-soft);border-radius:99px;padding:6px 11px;font-weight:600}
+  .chip.en{background:var(--green-soft);color:#0C7A4E}
+  .hero .shot{position:relative;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);aspect-ratio:1200/760;background:var(--slate-soft)}
+  .hero .shot img{width:100%;height:100%;object-fit:cover;display:block}
+  .hero .shot .tag{position:absolute;left:12px;bottom:12px;background:rgba(18,42,65,.82);color:#fff;font-size:11px;font-weight:600;padding:6px 10px;border-radius:8px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:22px;padding-top:18px;border-top:1px solid var(--line)}
+  .legend span{font-size:12px;color:var(--soft);display:inline-flex;align-items:center;gap:7px}
+
+  /* INDEX */
+  .idx-wrap{margin-top:30px;display:grid;grid-template-columns:230px 1fr;gap:28px;align-items:center}
+  .idx-score{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:26px;text-align:center}
+  .idx-score .big{font-family:var(--display);font-weight:900;font-size:74px;line-height:.9;color:var(--blue)}
+  .idx-score .big small{font-size:.34em;color:var(--muted);font-weight:700}
+  .idx-score .lbl{font-size:12.5px;font-weight:700;color:var(--soft);margin-top:6px}
+  .idx-score .cap{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5}
+  .idx-bars{display:flex;flex-direction:column;gap:15px}
+  .ib{display:grid;grid-template-columns:120px 1fr 40px;gap:14px;align-items:center}
+  .ib .ibn{font-size:13px;font-weight:700}.ib .ibn small{display:block;color:var(--muted);font-weight:600;font-size:10.5px}
+  .ib .track{height:12px;border-radius:99px;background:var(--slate-soft);overflow:hidden}
+  .ib .track i{display:block;height:100%;border-radius:99px}
+  .ib .v{font-family:var(--display);font-weight:800;font-size:18px;text-align:right}
+  .idx-formula{margin-top:20px;font-size:11.5px;color:var(--muted);background:var(--line-2);border-radius:10px;padding:14px 16px;line-height:1.6}
+  .idx-formula b{color:var(--ink-2)}
+
+  .kpigrid{margin-top:30px;display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+  .kpi{grid-column:span 2;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow)}
+  .kpi .k-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+  .kpi .k-lbl{font-size:12.5px;font-weight:700;color:var(--soft)}
+  .kpi .k-val{font-family:var(--display);font-weight:800;font-size:clamp(34px,5vw,50px);line-height:1}
+  .kpi .k-val small{font-size:.4em;font-weight:700;color:var(--muted);margin-left:3px}
+  .kpi .k-sub{font-size:11.5px;color:var(--muted);margin-top:7px}
+  .kpi.good .k-val{color:var(--green)}.kpi.bad .k-val{color:var(--coral)}.kpi.blue .k-val{color:var(--blue)}
+  .kpi.bad{border-color:var(--coral-soft);background:linear-gradient(180deg,#fff,#fff7f5)}
+
+  .fn{margin-top:28px;display:flex;flex-direction:column;gap:9px}
+  .fn-row{display:flex;align-items:center;gap:16px}
+  .fn-bar{height:64px;border-radius:12px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;color:#fff;box-shadow:var(--shadow);flex-shrink:0}
+  .fn-bar .s-name{font-family:var(--serif);font-weight:700;font-size:16px}
+  .fn-bar .s-name small{display:block;font-family:var(--sans);font-weight:600;font-size:10.5px;opacity:.85}
+  .fn-bar .s-val{font-family:var(--display);font-weight:800;font-size:22px;text-align:right}
+  .fn-bar .s-val small{font-size:.5em;font-weight:700;opacity:.9;display:block}
+  .fn-side{width:60px;font-family:var(--serif);font-weight:700;font-size:15px}
+  .g-green{background:linear-gradient(100deg,#16A06A,#2BB983)}.fn-side.green{color:var(--green)}
+  .g-amber{background:linear-gradient(100deg,#E0930F,#F0AE3B)}.fn-side.amber{color:var(--amber)}
+  .g-coral{background:linear-gradient(100deg,#E0533B,#EE7358)}.fn-side.coral{color:var(--coral)}
+  .g-slate{background:linear-gradient(100deg,#8595A7,#A3B1C0)}.fn-side.slate{color:var(--slate)}
+  .callout{margin-top:22px;background:var(--blue-soft);border-radius:12px;padding:18px 20px;font-size:14.5px;color:var(--ink-2)}.callout b{color:var(--blue)}
+  .callout.warn{background:var(--coral-soft)}.callout.warn b{color:var(--coral)}
+  .callout.ok{background:var(--green-soft)}.callout.ok b{color:#0C7A4E}
+
+  .ins{margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .ins-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:var(--shadow);display:grid;grid-template-columns:140px 1fr;gap:18px;align-items:center}
+  .ins-metric{font-family:var(--display);font-weight:800;font-size:30px;text-align:center;border-right:1px solid var(--line);padding-right:14px;line-height:1}
+  .ins-metric .unit{display:block;font-family:var(--sans);font-size:11.5px;font-weight:700;color:var(--muted);margin-top:6px}
+  .ins-body{font-size:14px;color:var(--soft);line-height:1.6}.ins-body b{color:var(--ink);font-weight:700}
+
+  .cards{margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+  .pcard .src2{font-size:11px;font-weight:800;color:var(--amber);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+  .pcard h4{font-family:var(--serif);font-size:15.5px;font-weight:700;line-height:1.4;margin-bottom:8px}
+  .pcard p{font-size:13px;color:var(--soft)}
+  .pcard a{font-size:11.5px;color:var(--blue);word-break:break-all;text-decoration:none;border-bottom:1px solid var(--blue-soft)}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .badge{font-size:12px;font-weight:700;color:#0C7A4E;background:var(--green-soft);border-radius:8px;padding:8px 12px}
+
+  .sg{margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .sg-col{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:var(--shadow)}
+  .sg-col h3{font-family:var(--serif);font-size:17px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:9px}
+  .sg-col.win h3{color:var(--green)}.sg-col.gap h3{color:var(--coral)}
+  .h-ico{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:15px;color:#fff}
+  .sg-col.win .h-ico{background:var(--green)}.sg-col.gap .h-ico{background:var(--coral)}
+  .sg-col ul{list-style:none;margin-top:14px;display:flex;flex-direction:column;gap:12px}
+  .sg-col li{font-size:14px;color:var(--ink-2);padding-left:22px;position:relative;line-height:1.55}.sg-col li b{font-weight:700}
+  .sg-col.win li::before{content:"▲";position:absolute;left:0;top:1px;color:var(--green);font-size:10px}
+  .sg-col.gap li::before{content:"▼";position:absolute;left:0;top:1px;color:var(--coral);font-size:10px}
+
+  .place-grid{margin-top:26px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .pl{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+  .pl h4{font-size:12.5px;font-weight:800;color:var(--soft);letter-spacing:.04em;margin-bottom:12px}
+  .quote{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--ink);line-height:1.4}
+  .tagcloud{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .tg{font-size:12.5px;font-weight:600;color:var(--ink-2);background:var(--slate-soft);border-radius:8px;padding:7px 11px}
+  .tg.hot{background:var(--amber-soft);color:#9A6408}
+  .linklist{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+  .linklist a{font-size:13px;color:var(--blue);text-decoration:none;display:flex;justify-content:space-between;gap:10px;padding:9px 12px;background:var(--blue-soft);border-radius:9px;font-weight:600}
+  .linklist a span{color:var(--muted);font-weight:600;font-size:11px}
+
+  .region{margin-top:26px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+  .region .rhead{padding:22px 24px;background:linear-gradient(100deg,#12325A,#1C4A7E);color:#fff}
+  .region .rhead h3{font-family:var(--serif);font-size:19px;font-weight:700}
+  .region .rhead p{font-size:13.5px;color:#BFD3EA;margin-top:4px}
+  .rmatrix{display:grid;grid-template-columns:1fr 1fr;gap:0}
+  .rm{padding:20px 24px;border-top:1px solid var(--line)}.rm:nth-child(even){border-left:1px solid var(--line)}
+  .rm .t{font-size:13px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .rm .t .dotc{width:9px;height:9px;border-radius:99px}
+  .rm p{font-size:13px;color:var(--soft);line-height:1.55}
+  .rm.yes .t{color:var(--green)}.rm.yes .dotc{background:var(--green)}
+  .rm.no .t{color:var(--muted)}.rm.no .dotc{background:var(--muted)}
+  .rverdict{padding:20px 24px;border-top:1px solid var(--line);background:var(--green-soft);font-size:14px;color:#0C5A3C}.rverdict b{color:#0C7A4E}
+
+  .prio{margin-top:26px;display:flex;flex-direction:column;gap:14px}
+  .p{display:grid;grid-template-columns:52px 1fr;gap:18px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:var(--shadow)}
+  .p .rk{font-family:var(--display);font-weight:800;font-size:32px;color:var(--blue)}
+  .p h4{font-family:var(--serif);font-size:16px;font-weight:700;margin-bottom:5px}
+  .p p{font-size:13.5px;color:var(--soft)}
+  .p .fills{display:inline-block;margin-top:9px;font-size:11px;font-weight:800;color:var(--coral);background:var(--coral-soft);padding:3px 9px;border-radius:99px}
+
+  .inv{margin-top:26px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .invc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow)}
+  .invc .h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+  .invc .h b{font-size:13px;font-weight:700}.invc .h .n{font-family:var(--display);font-weight:800;font-size:20px;color:var(--blue)}
+  .invc p{font-size:12px;color:var(--soft);line-height:1.5}
+  .invc.zero .h .n{color:var(--coral)}
+
+  .evi{background:var(--ink);color:#DCE6F0;border-bottom:none}
+  .evi h2.sec{color:#fff}.evi .eyebrow{color:var(--blue-2)}.evi .sec-lead{color:#9DB2C6}
+  .ev-list{margin-top:24px;border-top:1px solid rgba(255,255,255,.1)}
+  .ev{display:grid;grid-template-columns:30px 1fr;gap:14px;padding:15px 2px;border-bottom:1px solid rgba(255,255,255,.1)}
+  .ev .n{font-family:var(--display);font-weight:800;color:var(--blue-2);font-size:15px}
+  .ev .t{font-size:13.5px;font-weight:600;color:#fff;margin-bottom:2px}
+  .ev .d{font-size:12px;color:#9DB2C6;margin-bottom:5px}
+  .ev a{font-size:11.5px;color:#8FB4EE;word-break:break-all;text-decoration:none;border-bottom:1px solid rgba(143,180,238,.35)}
+  .foot{background:var(--ink-2);color:#8CA1B6;padding:30px 0 40px}
+  .foot .disc{font-size:11.5px;max-width:76ch;line-height:1.6}.foot b{color:#C6D5E4}
+
+  /* PROFILE / RADAR */
+  .prof-wrap{margin-top:28px;display:grid;grid-template-columns:360px 1fr;gap:32px;align-items:center}
+  .radar{position:relative;display:flex;justify-content:center}
+  .radar .composite{position:absolute;left:8px;bottom:0;text-align:left}
+  .radar .composite .num{font-family:var(--display);font-weight:900;font-size:38px;color:var(--blue);line-height:1}
+  .radar .composite small{display:block;font-size:11px;color:var(--muted);font-weight:700}
+  .axis-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .acard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}
+  .acard .ah{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+  .acard .an{font-size:13.5px;font-weight:700}.acard .an small{display:block;color:var(--muted);font-weight:600;font-size:10.5px;letter-spacing:.02em}
+  .acard .av{font-family:var(--display);font-weight:800;font-size:30px;line-height:1}
+  .acard .ab{font-size:12.5px;color:var(--soft);line-height:1.5;margin-bottom:10px}
+  .acard .ab b{color:var(--ink);font-weight:700}
+
+  @media(max-width:860px){
+    .prof-wrap{grid-template-columns:1fr}.axis-cards{grid-template-columns:1fr}
+    .hero .wrap{grid-template-columns:1fr}.hero .shot{order:-1}
+    .idx-wrap{grid-template-columns:1fr}.kpigrid{grid-template-columns:repeat(2,1fr)}.kpi{grid-column:span 1}
+    .ins,.cards,.sg,.place-grid,.rmatrix{grid-template-columns:1fr}.inv{grid-template-columns:1fr}
+    .ib{grid-template-columns:96px 1fr 34px}.fn-side{width:48px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <span class="src"><span class="dot"></span>메타 기반 진단 · <b>{{SOURCE_URL}}</b></span>
+  <span class="doc">Local Marketing Diagnostic</span>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <div>
+    <div class="kick">홈페이지가 스스로 말하는 것</div>
+    <h1>{{TITLE}}</h1>
+    <p class="desc">{{DESCRIPTION}}</p>
+    <div class="chips">{{HERO_CHIPS}}</div>
+    <div class="legend">
+      <span><span class="pill fact">사실</span> 출처로 검증</span>
+      <span><span class="pill est">추정</span> 판단</span>
+      <span><span class="pill none">데이터 없음</span> 내부·도구</span>
+    </div>
+  </div>
+  <div class="shot"><img src="{{OG_IMAGE}}" alt="og:image" /><span class="tag">og:image · 홈페이지 수집</span></div>
+</div></header>
+
+<section><div class="wrap">
+  <div class="eyebrow">01 — 마케팅 프로필</div>
+  <h2 class="sec">한 점수가 아니라 여러 축으로 <span class="pill est" style="vertical-align:middle">계산된 프로필 · 입력값 공개</span></h2>
+  <p class="sec-lead">{{PROFILE_LEAD}}</p>
+  <div class="prof-wrap">
+    <div class="radar">{{RADAR_SVG}}<div class="composite"><span class="num">{{COMPOSITE_SCORE}}</span><small>종합(참고용)</small></div></div>
+    <div class="axis-cards">{{AXIS_CARDS}}</div>
+  </div>
+  <div class="idx-formula">{{INDEX_FORMULA}}</div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">02 — 핵심 지표</div>
+  <h2 class="sec">숫자로 보는 현재</h2>
+  <div class="kpigrid">{{KPI_TILES}}</div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">03 — 마케팅 퍼널</div>
+  <h2 class="sec">어디가 강하고, 어디가 새는가</h2>
+  <p class="sec-lead">상단(노출·발견)과 하단(재방문)의 격차를 봅니다.</p>
+  <div class="fn">{{FUNNEL_ROWS}}</div>
+  <div class="callout">{{FUNNEL_CALLOUT}}</div>
+</div></section>
+
+{{PLACE_SECTION}}
+
+{{GSC_SECTION}}
+
+{{PRESS_SECTION}}
+
+<section><div class="wrap">
+  <div class="eyebrow">06 — 정밀 인사이트</div>
+  <h2 class="sec">데이터가 말하는 것</h2>
+  <div class="ins">{{INSIGHT_CARDS}}</div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow">07 — 장점과 부족</div>
+  <h2 class="sec">가진 것과 비어 있는 것</h2>
+  <div class="sg">
+    <div class="sg-col win"><h3><span class="h-ico">&#10003;</span> 장점</h3><ul>{{WIN_ITEMS}}</ul></div>
+    <div class="sg-col gap"><h3><span class="h-ico">!</span> 부족</h3><ul>{{GAP_ITEMS}}</ul></div>
+  </div>
+</div></section>
+
+{{REGION_SECTION}}
+
+<section><div class="wrap">
+  <div class="eyebrow">09 — 채워야 할 것</div>
+  <h2 class="sec">부족한 하단부터 순서대로</h2>
+  <div class="prio">{{PRIORITY_ITEMS}}</div>
+</div></section>
+
+{{OVERSEAS_SECTION}}
+
+<section><div class="wrap">
+  <div class="eyebrow">11 — 발견된 링크 인벤토리</div>
+  <h2 class="sec">홈페이지 링크를 모두 추적한 결과 <span class="pill fact" style="vertical-align:middle">사실</span></h2>
+  <p class="sec-lead">&lt;head&gt;만이 아니라 본문의 모든 링크를 분류했습니다.</p>
+  <div class="inv">{{INVENTORY_CARDS}}</div>
+</div></section>
+
+<section class="evi"><div class="wrap">
+  <div class="eyebrow">12 — 근거</div>
+  <h2 class="sec">모든 숫자의 출처</h2>
+  <p class="sec-lead">‘사실’ 각주는 아래 공개 출처로 검증할 수 있습니다.</p>
+  <div class="ev-list">{{REFERENCE_ITEMS}}</div>
+</div></section>
+
+<footer class="foot"><div class="wrap"><p class="disc">{{FOOT_DISC}}</p></div></footer>
+
+</body>
+</html>

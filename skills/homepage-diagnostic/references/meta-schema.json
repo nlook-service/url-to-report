@@ -1,0 +1,148 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Homepage Diagnostic — Collector Output (v1)",
+  "description": "Contract between the collector (seometa.go extension) and the homepage-diagnostic skill. Every extracted field carries a source so the skill can grade evidence. The collector NEVER invents values: absent = null + a flag, never a guess.",
+  "type": "object",
+  "required": ["target", "crawl", "provenance"],
+  "properties": {
+    "target": { "$ref": "#/definitions/site" },
+    "references": {
+      "type": "array",
+      "description": "Optional comparison sites, same shape as target.site, collected the same way.",
+      "items": { "$ref": "#/definitions/site" }
+    },
+    "crawl": { "$ref": "#/definitions/crawl" },
+    "provenance": { "$ref": "#/definitions/provenance" }
+  },
+  "definitions": {
+    "field": {
+      "type": "object",
+      "description": "A single extracted value plus where it came from. source=null means not found (do NOT fabricate).",
+      "required": ["value", "source"],
+      "properties": {
+        "value": { "type": ["string", "null"] },
+        "source": {
+          "type": ["string", "null"],
+          "description": "e.g. 'og:title', 'twitter:description', 'title-tag', 'jsonld.name', null"
+        }
+      }
+    },
+    "site": {
+      "type": "object",
+      "required": ["url", "fetched_at", "status", "meta", "seo_flags"],
+      "properties": {
+        "url": { "type": "string" },
+        "final_url": { "type": "string", "description": "after redirects" },
+        "fetched_at": { "type": "string", "format": "date-time" },
+        "status": { "type": "integer" },
+        "render_required": {
+          "type": "boolean",
+          "description": "true when body text is thin relative to script size (SPA). Signals that deep content needs a rendered fetch."
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "title": { "$ref": "#/definitions/field" },
+            "description": { "$ref": "#/definitions/field" },
+            "site_name": { "$ref": "#/definitions/field" },
+            "canonical": { "$ref": "#/definitions/field" },
+            "locale": { "$ref": "#/definitions/field" },
+            "theme_color": { "$ref": "#/definitions/field" },
+            "favicon": { "$ref": "#/definitions/field" },
+            "twitter_card": { "$ref": "#/definitions/field" },
+            "og_image": {
+              "type": "object",
+              "properties": {
+                "url": { "type": ["string", "null"] },
+                "width": { "type": ["integer", "null"] },
+                "height": { "type": ["integer", "null"] },
+                "type": { "type": ["string", "null"] },
+                "alt": { "type": ["string", "null"] }
+              }
+            },
+            "jsonld": {
+              "type": "array",
+              "description": "Parsed application/ld+json blocks (raw objects).",
+              "items": { "type": "object" }
+            }
+          }
+        },
+        "business_info": {
+          "type": "object",
+          "description": "Facts parsed from JSON-LD (LocalBusiness/Restaurant). All CITE the homepage. Absent field = null, never guessed. These are the report's 'Verified Facts' seeds AND the keys for off-site research.",
+          "properties": {
+            "name": { "type": ["string", "null"] },
+            "alternate_name": { "type": ["string", "null"] },
+            "address": { "type": ["string", "null"] },
+            "geo": { "type": ["object", "null"], "properties": { "lat": { "type": "number" }, "lng": { "type": "number" } } },
+            "telephone": { "type": ["string", "null"] },
+            "price_range": { "type": ["string", "null"] },
+            "serves_cuisine": { "type": "array", "items": { "type": "string" } },
+            "opening_hours": { "type": "array", "items": { "type": "string" }, "description": "raw openingHoursSpecification, verbatim" },
+            "accepts_reservations": { "type": ["boolean", "null"] },
+            "founding_date": { "type": ["string", "null"], "description": "compare against any heritage-year branding (e.g. '1931' vs foundingDate 2024)" },
+            "same_as": { "type": "array", "items": { "type": "string" }, "description": "external profiles — Naver Place, Instagram, etc. The skill uses these to seed off-site research." },
+            "has_map": { "type": ["string", "null"], "description": "map/place URL; often carries the Naver Place id" }
+          }
+        },
+        "seo_flags": {
+          "type": "object",
+          "description": "Booleans the skill turns into 'fact'-graded findings. All derived from what was actually found.",
+          "properties": {
+            "has_og_image": { "type": "boolean" },
+            "og_image_dimensions_ok": { "type": "boolean", "description": "~1200x630 (>=600px, ~1.9 ratio)" },
+            "has_jsonld": { "type": "boolean" },
+            "has_standard_description": { "type": "boolean" },
+            "title_length_ok": { "type": "boolean", "description": "roughly 10-60 chars" },
+            "has_canonical": { "type": "boolean" },
+            "has_favicon": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "crawl": {
+      "type": "object",
+      "required": ["depth", "pages"],
+      "properties": {
+        "depth": { "type": "integer" },
+        "max_pages": { "type": "integer" },
+        "sitemap_used": { "type": "boolean" },
+        "internal_links_found": { "type": "integer" },
+        "pages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path"],
+            "properties": {
+              "path": { "type": "string" },
+              "title": { "type": ["string", "null"] },
+              "source": { "type": "string", "enum": ["link", "sitemap"] },
+              "render_required": { "type": "boolean" }
+            }
+          }
+        },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "e.g. 'body_thin_spa', 'sitemap_missing', 'robots_disallow'"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["collector", "grading"],
+      "properties": {
+        "collector": { "type": "string", "description": "e.g. 'seometa/diagnostic v1'" },
+        "grading": {
+          "type": "object",
+          "description": "Default evidence grade per data layer. The skill may downgrade further but must not upgrade.",
+          "properties": {
+            "fetched_fields": { "type": "string", "enum": ["fact"] },
+            "crawl_structure": { "type": "string", "enum": ["circumstantial", "fact"] },
+            "analysis": { "type": "string", "enum": ["estimate"] }
+          }
+        }
+      }
+    }
+  }
+}

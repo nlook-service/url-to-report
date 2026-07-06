@@ -1,0 +1,28 @@
+# scratch / rendered test outputs
+/tmp/
+*.tmp
+test-report-*.html
+out.json
+/tmp/hd_live.json
+
+# python
+__pycache__/
+*.pyc
+
+# os
+.DS_Store
+
+# bkit local state (not part of the plugin)
+.bkit/
+
+# ruff
+.ruff_cache/
+
+# private client reports & data — never commit (owner-gated GSC, place data, etc.)
+# Deny-by-default: ignore ALL generated outputs and skill examples, then
+# allow-list only the neutral public demo. This protects the NEXT client too.
+examples/output/*
+!examples/output/obsidian-md.collect.json
+!examples/output/obsidian-md.draft.html
+skills/homepage-diagnostic/examples/*
+!skills/homepage-diagnostic/examples/.gitkeep

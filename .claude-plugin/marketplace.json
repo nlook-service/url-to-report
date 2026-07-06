@@ -1,0 +1,22 @@
+{
+  "name": "homepage-diagnostic",
+  "owner": {
+    "name": "nlook",
+    "url": "https://nlook.me"
+  },
+  "metadata": {
+    "description": "A Claude Code marketplace hosting the homepage-diagnostic skill.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "homepage-diagnostic",
+      "source": "./",
+      "description": "Turn a business URL into a cited, evidence-graded local marketing diagnostic report (사실/추정/데이터 없음).",
+      "version": "1.1.0",
+      "author": {
+        "name": "nlook"
+      }
+    }
+  ]
+}

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<!-- COLLECTOR DRAFT — fact layer only; analysis pending the skill -->
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Obsidian · 로컬 마케팅 진단 리포트 (근거 등급 표기판)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+<style>
+  :root{
+    --ink:#16110D;--ink-2:#1E1712;
+    --ember:#B23A22;--ember-deep:#7E2617;
+    --brass:#C1913F;--brass-soft:#D9B676;
+    --bone:#F3ECDD;--bone-2:#E8DDC7;
+    --leather:#7A5738;--ash:#8C8072;
+    --paper-ink:#241B12;--paper-ink-soft:#5A4C3C;
+    --fact:#5E7A4E;--est:#C98A2E;--none:#9A5B4A;
+    --line-dark:rgba(240,228,205,.14);--line-light:rgba(36,27,18,.14);
+    --serif:"Noto Serif KR",serif;
+    --sans:"Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);background:var(--bone);color:var(--paper-ink);line-height:1.7;-webkit-font-smoothing:antialiased;font-feature-settings:"tnum" on}
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px}
+  .section{padding:70px 0}
+  .eyebrow{font-size:12px;letter-spacing:.28em;text-transform:uppercase;font-weight:700;color:var(--ember);margin-bottom:18px}
+  .eyebrow.on-dark{color:var(--brass-soft)}
+  h2.title{font-family:var(--serif);font-weight:700;font-size:clamp(26px,4.2vw,40px);line-height:1.25;letter-spacing:-.01em;margin-bottom:14px;color:var(--paper-ink)}
+  .lead{font-size:clamp(16px,2vw,18px);color:var(--paper-ink-soft);max-width:66ch}
+
+  /* status pill (shared) */
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.02em;padding:3px 9px;border-radius:99px;white-space:nowrap}
+  .pill::before{content:"";width:7px;height:7px;border-radius:99px;display:inline-block}
+  .pill.fact{color:#3C5330;background:rgba(94,122,78,.16)}.pill.fact::before{background:var(--fact)}
+  .pill.est{color:#8A5B12;background:rgba(201,138,46,.18)}.pill.est::before{background:var(--est)}
+  .pill.none{color:#7E3A29;background:rgba(154,91,74,.18)}.pill.none::before{background:var(--none)}
+  .pill.on-dark.fact{color:#B7D19F;background:rgba(94,122,78,.2)}
+  .pill.on-dark.est{color:#E8C98A;background:rgba(201,138,46,.2)}
+  .pill.on-dark.none{color:#E0A594;background:rgba(154,91,74,.24)}
+
+  /* HERO */
+  .hero{background:radial-gradient(120% 90% at 80% -10%,rgba(178,58,34,.32),transparent 55%),radial-gradient(90% 70% at 8% 110%,rgba(193,145,63,.18),transparent 60%),linear-gradient(180deg,var(--ink) 0%,var(--ink-2) 100%);color:var(--bone);position:relative;overflow:hidden;border-bottom:1px solid var(--line-dark)}
+  .hero .wrap{padding-top:68px;padding-bottom:70px;position:relative;z-index:2}
+  .hero-mark{display:flex;align-items:center;gap:12px;margin-bottom:48px;font-family:var(--serif)}
+  .hero-mark .brand{font-weight:900;font-size:20px}
+  .hero-mark .brand b{color:var(--ember)}
+  .hero-mark .doc{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass-soft);font-family:var(--sans);font-weight:700;padding-left:14px;border-left:1px solid var(--line-dark)}
+  .hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(32px,6vw,60px);line-height:1.1;letter-spacing:-.02em;margin-bottom:20px}
+  .hero h1 .accent{color:var(--brass-soft)}
+  .hero .thesis{font-size:clamp(16px,2.3vw,20px);color:#E7DCC8;max-width:56ch;padding-left:20px;border-left:2px solid var(--ember)}
+  .hero .thesis b{color:#fff;font-weight:600}
+  .meta-row{margin-top:40px;display:flex;flex-wrap:wrap;gap:24px;font-size:12.5px;color:var(--ash)}
+  .meta-row span b{color:#CDBFA6;font-weight:600}
+
+  /* LEGEND */
+  .legend{background:var(--ink);color:var(--bone);border-bottom:1px solid var(--line-dark)}
+  .legend .wrap{padding:34px 28px}
+  .legend .lg-title{font-size:12px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--brass-soft);margin-bottom:16px}
+  .legend-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .lg-card{border:1px solid var(--line-dark);border-radius:4px;padding:16px 18px}
+  .lg-card .lgc-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .lg-card p{font-size:13px;color:#C4B7A2}
+
+  /* FACTS */
+  .facts{background:var(--bone)}
+  .fact-grid{margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:0 40px;border-top:1px solid var(--line-light)}
+  .fact-item{padding:16px 0;border-bottom:1px solid var(--line-light);display:flex;justify-content:space-between;gap:16px;align-items:baseline}
+  .fact-item .fk{font-size:13.5px;color:var(--paper-ink-soft);flex-shrink:0}
+  .fact-item .fv{font-size:14px;font-weight:600;text-align:right}
+  .fact-item .fv sup{font-size:10px;color:var(--ember);font-weight:700;margin-left:3px}
+  .facts-note{margin-top:22px;font-size:12.5px;color:var(--ash)}
+
+  /* SCORECARD */
+  .scorecard{background:var(--ink);color:var(--bone)}
+  .scorecard h2.title{color:var(--bone)}
+  .scorecard .lead{color:#C9BCA6}
+  .summary-line{margin:32px 0 6px;padding-bottom:28px;border-bottom:1px solid var(--line-dark);font-family:var(--serif);font-size:clamp(18px,2.6vw,24px);color:#F3ECDD;line-height:1.5;max-width:40ch}
+  .summary-line b{color:var(--brass-soft)}
+  .sc-list{margin-top:30px;display:grid;gap:16px}
+  .sc-row{display:grid;grid-template-columns:1fr auto;gap:10px 16px;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--line-dark)}
+  .sc-row .sc-lbl{font-size:14.5px;font-weight:600;color:#EDE2CE}
+  .sc-meta{display:flex;align-items:center;gap:10px;justify-self:end}
+  .level{display:flex;gap:3px}
+  .seg{width:26px;height:7px;border-radius:2px;background:rgba(243,236,221,.1)}
+  .seg.on-hi{background:linear-gradient(90deg,var(--brass),var(--brass-soft))}
+  .seg.on-mid{background:var(--warn,#C98A2E)}
+  .seg.on-lo{background:var(--ember)}
+  .lvl-text{font-family:var(--serif);font-weight:700;font-size:13px;width:34px;text-align:right}
+  .lvl-text.hi{color:var(--brass-soft)}.lvl-text.mid{color:#E0A83E}.lvl-text.lo{color:#E0796A}.lvl-text.na{color:var(--ash)}
+  .sc-basis{grid-column:1 / -1;font-size:12.5px;color:#B4A78F;margin-top:-4px}
+
+  /* GENERIC dark section */
+  .darksec{background:var(--ink-2);color:var(--bone)}
+  .darksec h2.title{color:var(--bone)}
+  .darksec .lead{color:#C9BCA6}
+
+  /* QUESTION / STRATEGY */
+  .adep{background:var(--bone)}
+  .metaphor{margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .m-card{border:1px solid var(--line-light);border-radius:4px;padding:22px;background:#fff}
+  .m-card .mtag{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+  .m-card.rent .mtag{color:var(--ember)}.m-card.own .mtag{color:var(--fact)}
+  .m-card h4{font-family:var(--serif);font-size:18px;font-weight:700;margin-bottom:8px}
+  .m-card p{font-size:13.5px;color:var(--paper-ink-soft)}
+  .m-card ul{list-style:none;margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .m-card li{font-size:13px;color:var(--paper-ink-soft);padding-left:15px;position:relative}
+  .m-card li::before{content:"—";position:absolute;left:0;color:var(--leather)}
+  .scenario{margin-top:24px;border-top:2px solid var(--ink)}
+  .sc2-row{display:grid;grid-template-columns:120px 1fr;gap:18px;padding:18px 4px;border-bottom:1px solid var(--line-light);align-items:start}
+  .sc2-row .when{font-family:var(--serif);font-weight:700;font-size:14px;color:var(--ember)}
+  .sc2-row .when small{display:block;color:var(--ash);font-family:var(--sans);font-weight:400;font-size:11.5px;margin-top:2px}
+  .sc2-row p{font-size:14px;color:var(--paper-ink-soft)}
+  .sc2-row p b{color:var(--paper-ink)}
+  .callbox{margin-top:24px;background:var(--ink);color:#EFE4CF;border-radius:4px;padding:22px 24px}
+  .callbox h4{font-family:var(--serif);color:var(--brass-soft);font-size:16px;margin-bottom:8px}
+  .callbox p{font-size:14px}.callbox b{color:#fff;font-weight:600}
+  .tag-inline{margin-left:8px}
+
+  /* LOCAL TABLE */
+  .tbl-wrap{margin-top:32px;overflow-x:auto;border:1px solid var(--line-dark);border-radius:4px}
+  table{width:100%;border-collapse:collapse;min-width:660px}
+  th,td{text-align:left;padding:13px 15px;font-size:13.5px;border-bottom:1px solid var(--line-dark);vertical-align:top}
+  thead th{background:rgba(243,236,221,.05);color:var(--brass-soft);font-size:12px;letter-spacing:.03em;font-weight:700;text-transform:uppercase}
+  td.ch{color:#F3ECDD;font-weight:600;white-space:nowrap}
+  td.role,td.act{color:#C4B7A2}
+  .fit{font-family:var(--serif);letter-spacing:2px;font-size:15px}
+  .fit.hi{color:var(--brass-soft)}.fit.mid{color:#E0A83E}
+  .st{font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px;white-space:nowrap}
+  .st.over{color:#E8B27E;background:rgba(178,58,34,.2)}
+  .st.gap{color:#E0CF9C;background:rgba(193,145,63,.16)}
+  .st.ok{color:#B7D19F;background:rgba(94,122,78,.2)}
+  .tbl-note{margin-top:14px;font-size:12px;color:#B4A78F}
+
+  /* PRIORITIES */
+  .prio{background:var(--bone)}
+  .plist{margin-top:36px;display:grid;gap:14px}
+  .p-item{display:grid;grid-template-columns:44px 1fr;gap:18px;background:#fff;border:1px solid var(--line-light);border-radius:4px;padding:22px 24px}
+  .p-item .rank{font-family:var(--serif);font-weight:900;font-size:24px;color:var(--ember)}
+  .p-item h3{font-size:16.5px;font-weight:700;margin-bottom:7px}
+  .p-item p{font-size:14px;color:var(--paper-ink-soft);max-width:72ch}
+  .not-now{margin-top:20px;border:1px dashed var(--line-light);border-radius:4px;padding:20px 22px}
+  .not-now .nn{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--ash);margin-bottom:8px}
+  .not-now h4{font-size:15px;font-weight:700;margin-bottom:6px}
+  .not-now p{font-size:13.5px;color:var(--paper-ink-soft);max-width:74ch}
+  .not-now b{color:var(--ember)}
+
+  /* VERIFICATION MAP */
+  .missing{background:var(--ink)}
+  .missing h2.title{color:var(--bone)}
+  .missing .lead{color:#C9BCA6}
+
+  /* REFERENCES */
+  .refs{background:var(--bone)}
+  .ref-list{margin-top:32px;border-top:1px solid var(--line-light)}
+  .ref{display:grid;grid-template-columns:28px 1fr;gap:14px;padding:16px 4px;border-bottom:1px solid var(--line-light)}
+  .ref .rn{font-family:var(--serif);font-weight:900;color:var(--brass);font-size:14px}
+  .ref .rt{font-size:14px;font-weight:600;margin-bottom:3px}
+  .ref .rd{font-size:12.5px;color:var(--paper-ink-soft);margin-bottom:6px}
+  .ref a{font-size:12.5px;color:var(--ember);text-decoration:none;word-break:break-all;border-bottom:1px solid rgba(178,58,34,.3)}
+
+  /* FOOTER */
+  .foot{background:var(--ink);color:#B7A98F;padding:42px 0 50px}
+  .foot .wrap{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-end}
+  .foot .fmark{font-family:var(--serif);font-weight:900;font-size:18px;color:#F3ECDD}
+  .foot .fmark b{color:var(--ember)}
+  .foot .disc{font-size:11.5px;max-width:62ch;color:#8C8072;line-height:1.65}
+
+  @media(max-width:760px){
+    .section{padding:52px 0}
+    .legend-grid{grid-template-columns:1fr}
+    .fact-grid{grid-template-columns:1fr;gap:0}
+    .metaphor{grid-template-columns:1fr}
+    .sc2-row{grid-template-columns:1fr;gap:6px}
+    .sc-meta{justify-self:start}
+  }
+  @media(max-width:640px){.md-row{grid-template-columns:1fr;gap:4px}}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-mark">
+      <span class="brand">Obsidian<b></b></span>
+      <span class="doc">Collector Draft · 사실 레이어 (분석 전)</span>
+    </div>
+    <div class="eyebrow on-dark">Obsidian</div>
+    <h1>수집기가 확인한 <span class="accent">사실</span>만 먼저</h1>
+    <p class="thesis">이 문서는 <b>수집기 자동 초안</b>입니다. 홈페이지 &lt;head&gt;와 JSON-LD로 확인된 것만 사실(각주)로 채웠고, <b>추정·전략·채널·우선순위는 스킬(Claude)이 채웁니다.</b> 수집기는 없는 값을 지어내지 않습니다.</p>
+    <div class="meta-row">
+      <span>대상 · <b>Obsidian</b></span>
+      <span>상권 · <b>https://obsidian.md/</b></span>
+      <span>작성 기준 · <b>collector draft</b></span>
+    </div>
+  </div>
+</header>
+
+<!-- LEGEND -->
+<section class="legend">
+  <div class="wrap">
+    <div class="lg-title">근거 등급 — 이 리포트를 읽는 법</div>
+    <div class="legend-grid">
+      <div class="lg-card"><div class="lgc-head"><span class="pill on-dark fact">사실</span></div><p>공개 출처로 확인됨. 하단 참고 링크로 검증 가능.</p></div>
+      <div class="lg-card"><div class="lgc-head"><span class="pill on-dark est">추정</span></div><p>사실을 바탕으로 한 정성적 판단. 숫자가 아니라 방향.</p></div>
+      <div class="lg-card"><div class="lgc-head"><span class="pill on-dark none">데이터 없음</span></div><p>내부 데이터(플레이스 통계·POS 등) 없이는 확정 불가.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- VERIFIED FACTS -->
+<section class="section facts">
+  <div class="wrap">
+    <div class="eyebrow">확인된 사실</div>
+    <h2 class="title">출처로 검증된 것들 <span class="pill fact" style="vertical-align:middle">사실</span></h2>
+    <p class="lead">아래는 모두 공개 출처(홈페이지·플레이스·언론·프로필)로 확인된 항목입니다. 위첨자 숫자는 하단 참고 링크 번호입니다.</p>
+    <div class="fact-grid"><div class="fact-item"><span class="fk">OG 이미지</span><span class="fv">있음<sup>2</sup></span></div><div class="fact-item"><span class="fk">검색 위생</span><span class="fv">메타 5/8 · SEO 플래그 4/7 · JSON-LD 0블록<sup>2</sup></span></div></div>
+    <p class="facts-note">※ 이 표는 수집기(collector)가 자동 추출한 사실 레이어입니다. 리뷰 수·평점 등 외부·내부 지표는 스킬 분석 단계에서 채워집니다.</p>
+  </div>
+</section>
+
+<!-- SCORECARD -->
+<section class="section scorecard">
+  <div class="wrap">
+    <div class="eyebrow on-dark">종합 스코어카드</div>
+    <h2 class="title">숫자 대신 등급으로</h2>
+    <p class="lead">측정치가 없는 점수는 가짜 정밀도입니다. 여기서는 <b>강 / 보통 / 약 / 미상</b> 4단계 + 근거 등급으로만 표기합니다.</p>
+    <div class="summary-line">수집기가 채운 <b>사실</b>: 메타·구조화 데이터. 평판·전환·오운드는 <b>미상</b> — 스킬 분석 대기.</div>
+    <div class="sc-list"><div class="sc-row"><span class="sc-lbl">홈페이지 메타·SEO 위생</span><div class="sc-meta"><span class="level"><span class="seg on-hi"></span><span class="seg on-hi"></span><span class="seg"></span></span><span class="lvl-text mid">보통</span><span class="pill fact on-dark">사실</span></div><div class="sc-basis">근거: SEO 플래그 4/7 통과.<sup>2</sup></div></div><div class="sc-row"><span class="sc-lbl">구조화 데이터·플레이스 연동</span><div class="sc-meta"><span class="level"><span class="seg on-lo"></span><span class="seg"></span><span class="seg"></span></span><span class="lvl-text lo">약</span><span class="pill est on-dark">추정</span></div><div class="sc-basis">LocalBusiness/Restaurant JSON-LD 미검출 → 검색엔진이 업체정보를 구조적으로 못 읽음.</div></div><div class="sc-row"><span class="sc-lbl">실제 리뷰·평판 자산</span><div class="sc-meta"><span class="level"><span class="seg"></span><span class="seg"></span><span class="seg"></span></span><span class="lvl-text na">미상</span><span class="pill none on-dark">데이터 없음</span></div><div class="sc-basis">외부 리서치·내부 데이터 필요 — 스킬 분석 단계에서 등급화.</div></div><div class="sc-row"><span class="sc-lbl">예약·전환 성과</span><div class="sc-meta"><span class="level"><span class="seg"></span><span class="seg"></span><span class="seg"></span></span><span class="lvl-text na">미상</span><span class="pill none on-dark">데이터 없음</span></div><div class="sc-basis">외부 리서치·내부 데이터 필요 — 스킬 분석 단계에서 등급화.</div></div><div class="sc-row"><span class="sc-lbl">오운드 채널·스토리 활용</span><div class="sc-meta"><span class="level"><span class="seg"></span><span class="seg"></span><span class="seg"></span></span><span class="lvl-text na">미상</span><span class="pill none on-dark">데이터 없음</span></div><div class="sc-basis">외부 리서치·내부 데이터 필요 — 스킬 분석 단계에서 등급화.</div></div><div class="sc-row"><span class="sc-lbl">로컬 밀착(당근·회식)</span><div class="sc-meta"><span class="level"><span class="seg"></span><span class="seg"></span><span class="seg"></span></span><span class="lvl-text na">미상</span><span class="pill none on-dark">데이터 없음</span></div><div class="sc-basis">외부 리서치·내부 데이터 필요 — 스킬 분석 단계에서 등급화.</div></div></div>
+  </div>
+</section>
+
+<!-- CORE QUESTION (optional; empty string removes it) -->
+
+
+<!-- LOCAL CHANNEL TABLE -->
+<section class="section darksec">
+  <div class="wrap">
+    <div class="eyebrow on-dark">로컬이 본진</div>
+    <h2 class="title">채널별 로컬 적합도 <span class="pill est" style="vertical-align:middle">추정·권고</span></h2>
+    <p class="lead">'로컬 적합'과 '권장 액션'은 판단입니다. '현재 상태'는 검색으로 확인한 정황이며, 정밀 확인은 각 채널 관리자 화면에서 하셔야 합니다.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>채널</th><th>역할</th><th>로컬 적합</th><th>현재(정황)</th><th>권장 액션</th></tr></thead>
+        <tbody><tr><td class="ch">— 스킬 분석 대기 —</td><td class="role">채널별 로컬 적합도·권장 액션</td><td><span class="fit mid">···</span></td><td><span class="st gap">대기</span></td><td class="act">Claude 분석 단계에서 채워짐</td></tr></tbody>
+      </table>
+    </div>
+    <p class="tbl-note">채널 진단은 스킬 분석 단계에서 외부 리서치를 근거로 채워집니다.</p>
+  </div>
+</section>
+
+<!-- PRIORITIES -->
+<section class="section prio">
+  <div class="wrap">
+    <div class="eyebrow">우선순위</div>
+    <h2 class="title">어디에 집중할까 <span class="pill est" style="vertical-align:middle">권고</span></h2>
+    <p class="lead">노출을 더 사는 대신, 로컬 바닥을 다지고 새는 구간을 막고 안 쓰던 자산을 꺼내는 순서.</p>
+    <div class="plist"><div class="p-item"><span class="rank">·</span><div><h3>스킬 분석 대기</h3><p>우선순위는 위 사실 + 외부 리서치를 근거로 Claude가 작성합니다. 이 초안은 수집기가 자동 렌더한 사실 레이어입니다.</p></div></div></div>
+    <div class="not-now">
+      <div class="nn">지금 하지 않아도 되는 것</div>
+      <h4>분석 전 초안</h4>
+      <p>우선순위·‘지금 아님’ 판단은 스킬(Claude)이 사실 + 외부 리서치를 근거로 작성합니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- VERIFICATION MAP -->
+<section class="section missing">
+  <div class="wrap">
+    <div class="eyebrow on-dark">추정 → 확신 전환 맵</div>
+    <h2 class="title">무엇을, 어디서 확인하면 되나</h2>
+    <p class="lead">'추정/미상' 항목마다 확신으로 바꾸는 데 필요한 정보와 <b>정확한 확인처(URL·위치)</b>를 붙였습니다. <span class="pill on-dark fact">공개</span> 는 누구나 지금 확인 가능, <span class="pill on-dark none">내부</span> 는 사장님 로그인 필요, <span class="pill on-dark est">도구</span> 는 무료 가입 도구입니다.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>항목 (현재 등급)</th><th>확신이 되려면 필요한 정보</th><th>어디서 · URL</th><th>구분</th></tr></thead>
+        <tbody><tr><td class="ch">— 스킬 분석 대기 —</td><td class="role">이 초안은 수집기가 채운 <b>사실 레이어</b>입니다.</td><td class="act">외부 리서치·채널 진단·우선순위는 Claude가 채웁니다.</td><td><span class="pill on-dark est">대기</span></td></tr></tbody>
+      </table>
+    </div>
+    <p class="tbl-note">공개 항목은 지금 바로 확인해 이 리포트의 '미상'을 채울 수 있습니다. 내부 항목은 관리자 화면·POS에 로그인해 캡처만 주시면 수치로 반영됩니다.</p>
+  </div>
+</section>
+
+<!-- REFERENCES -->
+<section class="section refs">
+  <div class="wrap">
+    <div class="eyebrow">참고 자료</div>
+    <h2 class="title">근거로 사용한 링크</h2>
+    <div class="ref-list"><div class="ref"><span class="rn">1</span><div><div class="rt">Obsidian — 홈페이지 JSON-LD</div><div class="rd">상호·주소·전화·영업시간·좌표·예약·연동 프로필 등</div><a href="https://obsidian.md/" target="_blank" rel="noopener">https://obsidian.md/</a></div></div><div class="ref"><span class="rn">2</span><div><div class="rt">Obsidian — &lt;head&gt; 메타</div><div class="rd">OG·canonical·twitter·SEO 플래그</div><a href="https://obsidian.md/" target="_blank" rel="noopener">https://obsidian.md/</a></div></div></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="foot">
+  <div class="wrap">
+    <div><div class="fmark">Obsidian<b></b> · 진단 리포트 v2</div></div>
+    <p class="disc">수집기 자동 초안 — 사실 레이어만 채워졌습니다. 완성 리포트는 스킬(Claude)이 외부 공개출처 리서치·추정·전략을 더해 생성합니다.</p>
+  </div>
+</footer>
+
+</body>
+</html>
