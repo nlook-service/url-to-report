@@ -75,6 +75,8 @@ Reaching Instagram, Threads, Naver, and WAF-guarded pages is a solved problem, s
 
 Only public pages, respecting the engine's safety/robots handling. This is market-research reading, not authenticated scraping.
 
+> The `collector/*.py` helpers referenced above ship with the **plugin install** (or a full repo clone), not with a manual `skills/` folder copy. Without them the skill still works — Claude fetches the homepage and researches sources directly; the collector only adds reproducible JSON/score output.
+
 ## Local-business mode (default for brick-and-mortar)
 
 If the subject is a local/brick-and-mortar business (restaurant, shop, clinic), default the strategy to **local**, not reach-expansion:

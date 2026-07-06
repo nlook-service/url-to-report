@@ -1,10 +1,10 @@
 <div align="center">
 
-# homepage-diagnostic
+# url-to-report
 
 ### One business URL → a cited, evidence-graded local marketing diagnostic.
 
-A workflow **skill** for **Claude Code** and **OpenAI Codex** that diagnoses a business from its **real homepage and public sources** — and never invents a number it did not verify.
+Ships the **`homepage-diagnostic`** skill for **Claude Code** and **OpenAI Codex** — it diagnoses a business from its **real homepage and public sources** and never invents a number it did not verify.
 
 <p>
   <a href="https://nlook.me"><img alt="Made by nlook" src="https://img.shields.io/badge/made%20by-nlook.me-0a0a0b"></a>
