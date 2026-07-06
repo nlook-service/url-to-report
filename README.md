@@ -44,14 +44,23 @@ This repo is both a **Claude Code plugin** and a plain **skill folder**. Pick on
 
 ### Option A — Claude Code plugin (recommended)
 
-From inside Claude Code:
+From inside Claude Code, run these **two separate commands** — one at a time, not pasted together:
+
+**1. Register this repo as a marketplace:**
 
 ```
 /plugin marketplace add nlook-service/url-to-report
+```
+
+> If Claude Code opens an **"Add Marketplace"** dialog, type only the repo into the source field — `nlook-service/url-to-report` — **not** the `/plugin install …` line below.
+
+**2. Install the bundled skill:**
+
+```
 /plugin install homepage-diagnostic@homepage-diagnostic
 ```
 
-The first command registers this repo as a marketplace; the second installs the bundled skill. Restart the session and the `homepage-diagnostic` skill is available.
+Restart the session and the `homepage-diagnostic` skill is available.
 
 > Replace `nlook-service/url-to-report` with your fork's `owner/repo` if you forked it.
 
