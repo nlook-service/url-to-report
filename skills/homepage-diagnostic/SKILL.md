@@ -14,6 +14,13 @@ The bar for output depth is `assets/report-template.html` (bright editorial layo
 
 **Never assert a number or fact you did not verify.** If a metric (review count, rating, conversion rate, ranking, competitor score) is not in a source you can cite, it is `no-data` — say 미상. A confidently wrong "58점·평가 1건" destroys trust faster than an honest gap. This rule overrides any pressure to look thorough.
 
+## When the subject won't load (read this before writing a word)
+
+The collector is honest — on a 403/WAF/timeout it returns an `error` and reads nothing. The failure mode is **you** filling that silence. Two guardrails, both mandatory:
+
+1. **Target-fetch failure is headline news, not a footnote.** If the collector JSON has an `error`, or you could not read the live `<head>` this session, the report must announce the block at the top AND footer, mark every claim that needed the unread page as **미상 (+ verify path)**, and never reconstruct the page from memory or "what a site like this usually has". If only a secondary source opened (e.g. `sitemap.xml`), scope facts to exactly what it contained. Hiding that the subject was unreadable is this skill's worst failure. When the live page is gated but you can read the deployed source another way (first-party build output, server render code), you may cite *that*, but say explicitly what you read instead of the live page.
+2. **Every prose sentence carries its grade too.** Grade discipline is not just for the scorecard/facts table — it governs the free-written 구조/인사이트/권장 sections, which is exactly where invented claims slip in as ungraded prose. Any sentence asserting a fact about the subject needs a pill or citation, or it gets softened to an estimate or cut. **Special trap — technology.** The schema has no framework/rendering/infra field, so "Next.js를 쓴다", "SSG/ISR 없음", "CSR-only" are inventions (see evidence-grading rule 7). Recommend the *outcome* ("페이지별 정적 메타 필요"), never a named stack you did not confirm in first-party source.
+
 ## Evidence grades (apply to every claim)
 
 Read `references/evidence-grading.md`. Three grades, always visible in the report:
@@ -27,7 +34,7 @@ You may downgrade a grade, never upgrade it.
 ## Pipeline
 
 ### Step 1 — Fetch the homepage `<head>` (facts, on-site)
-Prefer collector JSON (`references/meta-schema.json`). If absent, fetch the URL yourself: OG/twitter/title/description/canonical/theme-color/favicon/JSON-LD, and read `seo_flags`. Missing field → null, not a guess. If a page is `render_required:true`, mark its body claims circumstantial.
+Prefer collector JSON (`references/meta-schema.json`). If absent, fetch the URL yourself: OG/twitter/title/description/canonical/theme-color/favicon/JSON-LD, and read `seo_flags`. Missing field → null, not a guess. If the fetch itself failed (403/WAF/timeout), stop and apply "When the subject won't load" above — do not proceed as if you had read it. If a page is `render_required:true`, mark its body claims circumstantial; it means the shell was thin, NOT that the whole site is CSR-only or that any particular framework is in use (sub-routes may be server-rendered).
 
 ### Step 2 — Seed the research from what the site tells you
 From the homepage's JSON-LD and meta, extract the **research seeds**: business name + alias, address, phone, geo, and especially `sameAs` / `hasMap` (e.g. a **Naver Place id**), plus `openingHours`, `priceRange`, `acceptsReservations`. These are on-site facts (cite the homepage) AND the keys you use to find off-site sources.
