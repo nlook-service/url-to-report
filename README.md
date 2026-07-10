@@ -1,6 +1,6 @@
 <div align="center">
 
-# url-to-report
+| **[url-to-report](https://github.com/nlook-service/url-to-report)** | A Claude Code plugin & Codex skill that turns one business URL into a **cited, evidence-graded** marketing diagnostic — every claim graded 사실/추정/데이터 없음, never a guessed number. Local-first for brick-and-mortar, with a radar profile and a diffable score. |
 
 ### One business URL → a cited, evidence-graded local marketing diagnostic.
 
